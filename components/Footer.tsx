@@ -33,27 +33,15 @@ export default function Footer() {
               Empowering farmers with reliable machinery since 2020.
             </p>
             <div className="flex gap-4 mt-6">
-              <a 
-                href="#" 
-                className="bg-white border-2 border-gray-200 p-3 rounded-full hover:bg-green-600 hover:text-white hover:border-green-600 text-gray-600 transition-all duration-300 transform hover:scale-110 shadow-sm" 
-                aria-label="Facebook"
-              >
+              <span className="bg-white border-2 border-gray-200 p-3 rounded-full text-gray-400 shadow-sm cursor-default">
                 <FaFacebook size={18} />
-              </a>
-              <a 
-                href="#" 
-                className="bg-white border-2 border-gray-200 p-3 rounded-full hover:bg-green-600 hover:text-white hover:border-green-600 text-gray-600 transition-all duration-300 transform hover:scale-110 shadow-sm" 
-                aria-label="Instagram"
-              >
+              </span>
+              <span className="bg-white border-2 border-gray-200 p-3 rounded-full text-gray-400 shadow-sm cursor-default">
                 <FaInstagram size={18} />
-              </a>
-              <a 
-                href="#" 
-                className="bg-white border-2 border-gray-200 p-3 rounded-full hover:bg-green-600 hover:text-white hover:border-green-600 text-gray-600 transition-all duration-300 transform hover:scale-110 shadow-sm" 
-                aria-label="Twitter"
-              >
+              </span>
+              <span className="bg-white border-2 border-gray-200 p-3 rounded-full text-gray-400 shadow-sm cursor-default">
                 <FaTwitter size={18} />
-              </a>
+              </span>
             </div>
           </div>
 
@@ -63,50 +51,25 @@ export default function Footer() {
               Quick Links
             </h4>
             <ul className="space-y-3">
-              <li>
-                <Link 
-                  href="/" 
-                  className="text-gray-600 hover:text-green-600 transition-colors text-sm flex items-center gap-2 group"
-                >
-                  <span className="text-green-600 group-hover:translate-x-1 transition-transform">›</span> 
-                  <span className="group-hover:underline">Home</span>
-                </Link>
+              <li className="text-gray-500 text-sm flex items-center gap-2 cursor-default">
+                <span className="text-gray-400">›</span> 
+                <span>Home</span>
               </li>
-              <li>
-                <Link 
-                  href="/catalog" 
-                  className="text-gray-600 hover:text-green-600 transition-colors text-sm flex items-center gap-2 group"
-                >
-                  <span className="text-green-600 group-hover:translate-x-1 transition-transform">›</span> 
-                  <span className="group-hover:underline">Our Catalog</span>
-                </Link>
+              <li className="text-gray-500 text-sm flex items-center gap-2 cursor-default">
+                <span className="text-gray-400">›</span> 
+                <span>Our Catalog</span>
               </li>
-              <li>
-                <Link 
-                  href="/about" 
-                  className="text-gray-600 hover:text-green-600 transition-colors text-sm flex items-center gap-2 group"
-                >
-                  <span className="text-green-600 group-hover:translate-x-1 transition-transform">›</span> 
-                  <span className="group-hover:underline">About Us</span>
-                </Link>
+              <li className="text-gray-500 text-sm flex items-center gap-2 cursor-default">
+                <span className="text-gray-400">›</span> 
+                <span>About Us</span>
               </li>
-              <li>
-                <Link 
-                  href="/services" 
-                  className="text-gray-600 hover:text-green-600 transition-colors text-sm flex items-center gap-2 group"
-                >
-                  <span className="text-green-600 group-hover:translate-x-1 transition-transform">›</span> 
-                  <span className="group-hover:underline">Services</span>
-                </Link>
+              <li className="text-gray-500 text-sm flex items-center gap-2 cursor-default">
+                <span className="text-gray-400">›</span> 
+                <span>Services</span>
               </li>
-              <li>
-                <Link 
-                  href="/contact" 
-                  className="text-gray-600 hover:text-green-600 transition-colors text-sm flex items-center gap-2 group"
-                >
-                  <span className="text-green-600 group-hover:translate-x-1 transition-transform">›</span> 
-                  <span className="group-hover:underline">Contact</span>
-                </Link>
+              <li className="text-gray-500 text-sm flex items-center gap-2 cursor-default">
+                <span className="text-gray-400">›</span> 
+                <span>Contact</span>
               </li>
             </ul>
           </div>
@@ -178,12 +141,12 @@ export default function Footer() {
               &copy; {new Date().getFullYear()} SahyogFarm. All rights reserved.
             </p>
             <div className="flex gap-6">
-              <Link href="/privacy" className="text-gray-600 hover:text-green-600 transition-colors hover:underline">
+              <span className="text-gray-500 cursor-default">
                 Privacy Policy
-              </Link>
-              <Link href="/terms" className="text-gray-600 hover:text-green-600 transition-colors hover:underline">
+              </span>
+              <span className="text-gray-500 cursor-default">
                 Terms of Service
-              </Link>
+              </span>
             </div>
           </div>
         </div>
