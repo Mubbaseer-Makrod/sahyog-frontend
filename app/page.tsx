@@ -16,91 +16,145 @@ export default function HomePage() {
     {
       title: "Mahindra 575 DI",
       description: "Reliable tractor for everyday farming needs.",
-      image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
+        "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80",
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80"
+      ],
       year: 2020,
     },
     {
       title: "Swaraj 744 FE",
       description: "Fuel efficient and powerful performance.",
-      image: "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80",
+        "https://images.unsplash.com/photo-1530267981375-f0c84e630aa3?w=800&q=80"
+      ],
       year: 2019,
     },
     {
       title: "John Deere 5310",
       description: "Advanced features with smooth driving experience.",
-      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
+        "https://images.unsplash.com/photo-1596406473219-d27c86284c37?w=800&q=80",
+        "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80",
+        "https://images.unsplash.com/photo-1527016021513-b09758b777bd?w=800&q=80"
+      ],
       year: 2021,
     },
     {
       title: "Massey Ferguson 5610",
       description: "Powerful engine with excellent fuel economy.",
-      image: "https://images.unsplash.com/photo-1530267981375-f0c84e630aa3?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1530267981375-f0c84e630aa3?w=800&q=80",
+        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80"
+      ],
       year: 2018,
     },
     {
       title: "New Holland 3630",
       description: "Perfect for small to medium farms.",
-      image: "https://images.unsplash.com/photo-1596406473219-d27c86284c37?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1596406473219-d27c86284c37?w=800&q=80",
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
+        "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80"
+      ],
       year: 2022,
     },
     {
       title: "Kubota L3901",
       description: "Compact yet powerful for versatile tasks.",
-      image: "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80"
+      ],
       year: 2020,
     },
     {
       title: "Case IH Farmall 75C",
       description: "Advanced hydraulics and comfortable cabin.",
-      image: "https://images.unsplash.com/photo-1527016021513-b09758b777bd?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1527016021513-b09758b777bd?w=800&q=80",
+        "https://images.unsplash.com/photo-1530267981375-f0c84e630aa3?w=800&q=80",
+        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80"
+      ],
       year: 2019,
     },
     {
       title: "Sonalika DI 745 III",
       description: "Robust build with modern features.",
-      image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
+        "https://images.unsplash.com/photo-1596406473219-d27c86284c37?w=800&q=80"
+      ],
       year: 2021,
     },
     {
       title: "Farmtrac 60 Classic",
       description: "Economical choice for regular farming.",
-      image: "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80",
+        "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80",
+        "https://images.unsplash.com/photo-1527016021513-b09758b777bd?w=800&q=80"
+      ],
       year: 2023,
     },
     {
       title: "Eicher 380",
       description: "Trusted brand with great resale value.",
-      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
+        "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80"
+      ],
       year: 2022,
     },
     {
       title: "Mahindra Arjun 605",
       description: "High performance for intensive farming.",
-      image: "https://images.unsplash.com/photo-1530267981375-f0c84e630aa3?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1530267981375-f0c84e630aa3?w=800&q=80",
+        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80"
+      ],
       year: 2020,
     },
     {
       title: "Swaraj 855 FE",
       description: "Fuel efficient with low maintenance.",
-      image: "https://images.unsplash.com/photo-1596406473219-d27c86284c37?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1596406473219-d27c86284c37?w=800&q=80",
+        "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80"
+      ],
       year: 2021,
     },
     {
       title: "John Deere 5405",
       description: "Premium features and reliability.",
-      image: "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80",
+        "https://images.unsplash.com/photo-1527016021513-b09758b777bd?w=800&q=80",
+        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
+        "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80"
+      ],
       year: 2019,
     },
     {
       title: "New Holland TD5.110",
       description: "Power-packed performance for large fields.",
-      image: "https://images.unsplash.com/photo-1527016021513-b09758b777bd?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1527016021513-b09758b777bd?w=800&q=80",
+        "https://images.unsplash.com/photo-1530267981375-f0c84e630aa3?w=800&q=80"
+      ],
       year: 2023,
     },
     {
       title: "Massey Ferguson 1035",
       description: "Versatile tractor for multiple applications.",
-      image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
+        "https://images.unsplash.com/photo-1596406473219-d27c86284c37?w=800&q=80"
+      ],
       year: 2022,
     },
   ];
@@ -134,7 +188,7 @@ export default function HomePage() {
               key={`${currentPage}-${index}`}
               title={product.title}
               description={product.description}
-              image={product.image}
+              images={product.images}
               year={product.year}
             />
           ))}
