@@ -2,10 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { AuthContextType, User, LoginCredentials, AuthResponse } from '@/types';
-import { apiClient } from '@/lib/api';
-import { setAuthToken, getUserData, setUserData, clearAuthData, getAuthToken } from '@/lib/auth';
-import { API_ENDPOINTS } from '@/lib/constants';
+import { AuthContextType, User } from '@/types';
+import * as authService from '@/lib/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -21,37 +19,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const token = getAuthToken();
-      if (!token) {
-        setIsLoading(false);
-        return;
-      }
-
+      setIsLoading(true);
+      
       // Try to get user data from localStorage first
-      const cachedUser = getUserData();
+      const cachedUser = authService.getUserData();
       if (cachedUser) {
         setUser(cachedUser);
-        setIsLoading(false);
-        
-        // Verify token with backend in background
-        try {
-          const response = await apiClient.get<{ user: User }>(API_ENDPOINTS.ME);
-          setUser(response.user);
-          setUserData(response.user);
-        } catch (error) {
-          // Token invalid, clear auth
-          clearAuthData();
-          setUser(null);
-        }
-        return;
       }
 
-      // No cached user, verify with backend
-      const response = await apiClient.get<{ user: User }>(API_ENDPOINTS.ME);
-      setUser(response.user);
-      setUserData(response.user);
+      // Verify token with backend
+      const currentUser = await authService.getCurrentUser();
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+      }
     } catch (error) {
-      clearAuthData();
+      console.error('Auth check error:', error);
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -62,50 +46,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       
-      // TODO: Replace with actual API call when backend is ready
-      // For now, use mock authentication
-      if (email === 'admin@sahyogfarm.com' && password === 'admin123') {
-        const mockResponse: AuthResponse = {
-          user: {
-            id: '1',
-            email: 'admin@sahyogfarm.com',
-            name: 'Admin',
-            role: 'admin',
-          },
-          token: 'mock-jwt-token-' + Date.now(),
-        };
-
-        setAuthToken(mockResponse.token);
-        setUserData(mockResponse.user);
-        setUser(mockResponse.user);
-        router.push('/admin/dashboard');
-      } else {
-        throw new Error('Invalid credentials');
-      }
-
-      // Actual API call (uncomment when backend is ready):
-      /*
-      const response = await apiClient.post<AuthResponse>(
-        API_ENDPOINTS.LOGIN,
-        { email, password }
-      );
-
-      setAuthToken(response.token);
-      setUserData(response.user);
-      setUser(response.user);
+      const user = await authService.login({ email, password });
+      setUser(user);
+      
+      // Redirect to dashboard on successful login
       router.push('/admin/dashboard');
-      */
-    } catch (error) {
-      throw error;
+    } catch (error: any) {
+      console.error('Login error:', error);
+      throw new Error(error.message || 'Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    clearAuthData();
-    setUser(null);
-    router.push('/admin/login');
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+      router.push('/admin/login');
+    }
   };
 
   const value: AuthContextType = {

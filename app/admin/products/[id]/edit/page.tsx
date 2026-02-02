@@ -2,38 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { FaSave, FaTimes, FaImage, FaTrash } from 'react-icons/fa';
-import { ProductFormData, Product } from '@/types';
-
-// Mock data - replace with actual API call
-const mockProducts: Product[] = [
-  {
-    id: '1',
-    title: 'Mahindra 575 DI',
-    description: 'Reliable tractor for everyday farming needs.',
-    images: ['https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80'],
-    year: 2020,
-    status: 'available',
-    createdAt: '2024-01-15T10:00:00Z',
-    updatedAt: '2024-01-15T10:00:00Z',
-  },
-  {
-    id: '2',
-    title: 'John Deere 5310',
-    description: 'Advanced features with smooth driving experience.',
-    images: ['https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80'],
-    year: 2021,
-    status: 'sold',
-    createdAt: '2024-01-14T10:00:00Z',
-    updatedAt: '2024-01-14T10:00:00Z',
-  },
-];
+import { FaSave, FaTimes, FaImage, FaTrash, FaSpinner } from 'react-icons/fa';
+import { ProductFormData } from '@/types';
+import { useProducts } from '@/contexts/ProductsContext';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function EditProductPage() {
   const router = useRouter();
   const params = useParams();
   const productId = params.id as string;
 
+  const { getProductById, updateProduct } = useProducts();
+  const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<ProductFormData>({
@@ -44,15 +24,41 @@ export default function EditProductPage() {
     status: 'available',
   });
 
-  const [imagePreviewInput, setImagePreviewInput] = useState('');
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    // Convert files to base64
+    const newImages: string[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!file.type.startsWith('image/')) {
+        toast.warning(`${file.name} is not an image file`, 'Invalid File');
+        continue;
+      }
+      
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve) => {
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+      newImages.push(base64);
+    }
+
+    if (newImages.length > 0) {
+      setFormData({
+        ...formData,
+        images: [...formData.images, ...newImages],
+      });
+      toast.success(`${newImages.length} image(s) uploaded successfully`);
+    }
+  };
 
   useEffect(() => {
     // Load product data
     const loadProduct = async () => {
       try {
-        // TODO: Replace with actual API call
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const product = mockProducts.find(p => p.id === productId);
+        const product = getProductById(productId);
         
         if (product) {
           setFormData({
@@ -64,11 +70,12 @@ export default function EditProductPage() {
             status: product.status,
           });
         } else {
-          alert('Product not found');
+          toast.error('Product not found');
           router.push('/admin/products');
         }
       } catch (error) {
-        alert('Failed to load product');
+        toast.error('Failed to load product');
+        router.push('/admin/products');
       } finally {
         setIsLoading(false);
       }
@@ -81,35 +88,54 @@ export default function EditProductPage() {
     e.preventDefault();
     
     if (!formData.title || !formData.description || !formData.year) {
-      alert('Please fill in all required fields');
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    if (formData.images.length === 0) {
+      toast.warning('Please add at least one image');
       return;
     }
 
     setIsSubmitting(true);
     
     try {
-      // TODO: Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Clean the data - remove null/undefined optional fields
+      const cleanData = {
+        title: formData.title,
+        description: formData.description,
+        images: formData.images,
+        year: formData.year,
+        status: formData.status,
+        ...(formData.price !== null && formData.price !== undefined && { price: formData.price })
+      };
       
-      console.log('Updating product:', productId, formData);
-      alert('Product updated successfully!');
-      router.push('/admin/products');
-    } catch (error) {
-      alert('Failed to update product');
+      console.log('Submitting product update with data:', cleanData);
+      await updateProduct(productId, cleanData);
+      toast.success('Product updated successfully!');
+      
+      // Wait a moment for user to see the success message
+      setTimeout(() => {
+        router.push('/admin/products');
+      }, 1000);
+    } catch (error: any) {
+      console.error('Error updating product:', error);
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          name: error.name,
+          message: error.message,
+          statusCode: (error as any).statusCode,
+          code: (error as any).code,
+          details: (error as any).details,
+        });
+      }
+      toast.error(error.message || 'Failed to update product');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleAddImage = () => {
-    if (imagePreviewInput.trim()) {
-      setFormData({
-        ...formData,
-        images: [...formData.images, imagePreviewInput.trim()],
-      });
-      setImagePreviewInput('');
-    }
-  };
+
 
   const handleRemoveImage = (index: number) => {
     setFormData({
@@ -122,7 +148,7 @@ export default function EditProductPage() {
     return (
       <div className="p-6 lg:p-8 flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <FaSpinner className="animate-spin text-green-600 text-4xl mx-auto mb-4" />
           <p className="text-gray-600">Loading product...</p>
         </div>
       </div>
@@ -232,26 +258,30 @@ export default function EditProductPage() {
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
           <h2 className="text-xl font-bold text-gray-800 mb-6">Product Images</h2>
 
+          {/* Upload Images */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Add Image URL
+              Upload Images
             </label>
-            <div className="flex gap-2">
-              <input
-                type="url"
-                value={imagePreviewInput}
-                onChange={(e) => setImagePreviewInput(e.target.value)}
-                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
-                placeholder="https://example.com/image.jpg"
-              />
-              <button
-                type="button"
-                onClick={handleAddImage}
-                className="px-6 py-2.5 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-all"
-              >
-                Add
-              </button>
+            <div className="flex items-center gap-4">
+              <label className="flex-1 cursor-pointer">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-500 transition-colors">
+                  <FaImage className="mx-auto text-gray-400 text-3xl mb-2" />
+                  <p className="text-sm text-gray-600 mb-1">Click to upload images</p>
+                  <p className="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB each</p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                </div>
+              </label>
             </div>
+            <p className="text-xs text-gray-500 mt-2">
+              You can select multiple images at once. Works on all devices (computer, Android, iOS).
+            </p>
           </div>
 
           {formData.images.length > 0 && (

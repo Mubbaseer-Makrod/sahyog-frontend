@@ -1,169 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import SectionHeader from "@/components/SectionHeader";
 import { ProductCard } from "@/components/ProductCard";
 import Pagination from "@/components/Pagination";
 import Footer from "@/components/Footer";
+import { useProducts } from "@/contexts/ProductsContext";
+import { FaSpinner, FaExclamationTriangle } from "react-icons/fa";
 
 export default function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
+  const itemsPerPage = 12; // Match backend default
+  
+  // Get products from global context
+  const { publicProducts, pagination, fetchPublicProducts, isLoading, error } = useProducts();
 
-  const allProducts = [
-    {
-      title: "Mahindra 575 DI",
-      description: "Reliable tractor for everyday farming needs.",
-      images: [
-        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
-        "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80",
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80"
-      ],
-      year: 2020,
-    },
-    {
-      title: "Swaraj 744 FE",
-      description: "Fuel efficient and powerful performance.",
-      images: [
-        "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80",
-        "https://images.unsplash.com/photo-1530267981375-f0c84e630aa3?w=800&q=80"
-      ],
-      year: 2019,
-    },
-    {
-      title: "John Deere 5310",
-      description: "Advanced features with smooth driving experience.",
-      images: [
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
-        "https://images.unsplash.com/photo-1596406473219-d27c86284c37?w=800&q=80",
-        "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80",
-        "https://images.unsplash.com/photo-1527016021513-b09758b777bd?w=800&q=80"
-      ],
-      year: 2021,
-    },
-    {
-      title: "Massey Ferguson 5610",
-      description: "Powerful engine with excellent fuel economy.",
-      images: [
-        "https://images.unsplash.com/photo-1530267981375-f0c84e630aa3?w=800&q=80",
-        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80"
-      ],
-      year: 2018,
-    },
-    {
-      title: "New Holland 3630",
-      description: "Perfect for small to medium farms.",
-      images: [
-        "https://images.unsplash.com/photo-1596406473219-d27c86284c37?w=800&q=80",
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
-        "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80"
-      ],
-      year: 2022,
-    },
-    {
-      title: "Kubota L3901",
-      description: "Compact yet powerful for versatile tasks.",
-      images: [
-        "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80"
-      ],
-      year: 2020,
-    },
-    {
-      title: "Case IH Farmall 75C",
-      description: "Advanced hydraulics and comfortable cabin.",
-      images: [
-        "https://images.unsplash.com/photo-1527016021513-b09758b777bd?w=800&q=80",
-        "https://images.unsplash.com/photo-1530267981375-f0c84e630aa3?w=800&q=80",
-        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80"
-      ],
-      year: 2019,
-    },
-    {
-      title: "Sonalika DI 745 III",
-      description: "Robust build with modern features.",
-      images: [
-        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
-        "https://images.unsplash.com/photo-1596406473219-d27c86284c37?w=800&q=80"
-      ],
-      year: 2021,
-    },
-    {
-      title: "Farmtrac 60 Classic",
-      description: "Economical choice for regular farming.",
-      images: [
-        "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80",
-        "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80",
-        "https://images.unsplash.com/photo-1527016021513-b09758b777bd?w=800&q=80"
-      ],
-      year: 2023,
-    },
-    {
-      title: "Eicher 380",
-      description: "Trusted brand with great resale value.",
-      images: [
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
-        "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80"
-      ],
-      year: 2022,
-    },
-    {
-      title: "Mahindra Arjun 605",
-      description: "High performance for intensive farming.",
-      images: [
-        "https://images.unsplash.com/photo-1530267981375-f0c84e630aa3?w=800&q=80",
-        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80"
-      ],
-      year: 2020,
-    },
-    {
-      title: "Swaraj 855 FE",
-      description: "Fuel efficient with low maintenance.",
-      images: [
-        "https://images.unsplash.com/photo-1596406473219-d27c86284c37?w=800&q=80",
-        "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80"
-      ],
-      year: 2021,
-    },
-    {
-      title: "John Deere 5405",
-      description: "Premium features and reliability.",
-      images: [
-        "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80",
-        "https://images.unsplash.com/photo-1527016021513-b09758b777bd?w=800&q=80",
-        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
-        "https://images.unsplash.com/photo-1589889527408-2e6f10cb3c28?w=800&q=80"
-      ],
-      year: 2019,
-    },
-    {
-      title: "New Holland TD5.110",
-      description: "Power-packed performance for large fields.",
-      images: [
-        "https://images.unsplash.com/photo-1527016021513-b09758b777bd?w=800&q=80",
-        "https://images.unsplash.com/photo-1530267981375-f0c84e630aa3?w=800&q=80"
-      ],
-      year: 2023,
-    },
-    {
-      title: "Massey Ferguson 1035",
-      description: "Versatile tractor for multiple applications.",
-      images: [
-        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
-        "https://images.unsplash.com/photo-1596406473219-d27c86284c37?w=800&q=80"
-      ],
-      year: 2022,
-    },
-  ];
-
-  // Calculate pagination
-  const totalPages = Math.ceil(allProducts.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentProducts = allProducts.slice(startIndex, endIndex);
+  // Fetch products on mount and when page changes
+  useEffect(() => {
+    fetchPublicProducts({ page: currentPage, limit: itemsPerPage });
+  }, [currentPage]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -182,31 +39,63 @@ export default function HomePage() {
           subtitle="Browse our premium collection of tractors from top brands. Tap on any tractor to enquire instantly via WhatsApp."
         />
 
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 md:gap-8">
-          {currentProducts.map((product, index) => (
-            <ProductCard
-              key={`${currentPage}-${index}`}
-              title={product.title}
-              description={product.description}
-              images={product.images}
-              year={product.year}
-            />
-          ))}
-        </section>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <Pagination 
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-lg mb-8 flex items-start gap-3">
+            <FaExclamationTriangle className="text-red-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold">Error loading products</p>
+              <p className="text-sm mt-1">{error}</p>
+            </div>
+          </div>
         )}
 
-        {/* Results Info */}
-        <div className="text-center mt-4 text-sm text-gray-600">
-          Showing {startIndex + 1}-{Math.min(endIndex, allProducts.length)} of {allProducts.length} tractors
-        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <FaSpinner className="animate-spin text-green-600 text-4xl mx-auto mb-4" />
+              <p className="text-gray-600">Loading tractors...</p>
+            </div>
+          </div>
+        ) : publicProducts.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="bg-gray-100 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+              <FaExclamationTriangle className="text-gray-400 text-3xl" />
+            </div>
+            <p className="text-gray-600 text-lg">No tractors available at the moment.</p>
+            <p className="text-gray-500 text-sm mt-2">Please check back later.</p>
+          </div>
+        ) : (
+          <>
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 md:gap-8">
+              {publicProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  title={product.title}
+                  description={product.description}
+                  images={product.images}
+                  year={product.year}
+                />
+              ))}
+            </section>
+
+            {/* Pagination */}
+            {pagination && pagination.totalPages > 1 && (
+              <Pagination 
+                currentPage={pagination.page}
+                totalPages={pagination.totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
+
+            {/* Results Info */}
+            {pagination && (
+              <div className="text-center mt-4 text-sm text-gray-600">
+                Showing {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} tractors
+              </div>
+            )}
+          </>
+        )}
       </main>
 
       <Footer />

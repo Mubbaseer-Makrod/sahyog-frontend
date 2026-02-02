@@ -1,41 +1,22 @@
 "use client";
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { FaBox, FaCheckCircle, FaTimesCircle, FaPlus, FaClock } from 'react-icons/fa';
-
-// Mock data - will be replaced with actual API calls
-const mockStats = {
-  totalProducts: 15,
-  availableProducts: 10,
-  soldProducts: 5,
-  recentlyAdded: 3,
-};
-
-const mockRecentProducts = [
-  {
-    id: '1',
-    title: 'Mahindra 575 DI',
-    year: 2020,
-    status: 'available',
-    createdAt: '2024-01-15',
-  },
-  {
-    id: '2',
-    title: 'John Deere 5310',
-    year: 2021,
-    status: 'sold',
-    createdAt: '2024-01-14',
-  },
-  {
-    id: '3',
-    title: 'Swaraj 744 FE',
-    year: 2019,
-    status: 'available',
-    createdAt: '2024-01-13',
-  },
-];
+import { useProducts } from '@/contexts/ProductsContext';
 
 export default function AdminDashboard() {
+  const { stats, products, fetchProducts, fetchStats, isLoading, error } = useProducts();
+  
+  // Fetch products and stats on mount
+  useEffect(() => {
+    fetchStats();
+    fetchProducts({ limit: 5 }); // Fetch first 5 products for recent list
+  }, []);
+
+  // Get recent products (first 5 from sorted list)
+  const recentProducts = products.slice(0, 5);
+
   return (
     <div className="p-6 lg:p-8">
       {/* Header */}
@@ -43,6 +24,13 @@ export default function AdminDashboard() {
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
         <p className="text-gray-600">Welcome back! Here's what's happening with your inventory.</p>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -52,7 +40,9 @@ export default function AdminDashboard() {
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <FaBox className="text-blue-600" size={24} />
             </div>
-            <span className="text-2xl font-bold text-gray-800">{mockStats.totalProducts}</span>
+            <span className="text-2xl font-bold text-gray-800">
+              {isLoading ? '...' : stats.total}
+            </span>
           </div>
           <h3 className="text-sm font-medium text-gray-600">Total Products</h3>
         </div>
@@ -63,7 +53,9 @@ export default function AdminDashboard() {
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
               <FaCheckCircle className="text-green-600" size={24} />
             </div>
-            <span className="text-2xl font-bold text-gray-800">{mockStats.availableProducts}</span>
+            <span className="text-2xl font-bold text-gray-800">
+              {isLoading ? '...' : stats.available}
+            </span>
           </div>
           <h3 className="text-sm font-medium text-gray-600">Available</h3>
         </div>
@@ -74,7 +66,9 @@ export default function AdminDashboard() {
             <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
               <FaTimesCircle className="text-orange-600" size={24} />
             </div>
-            <span className="text-2xl font-bold text-gray-800">{mockStats.soldProducts}</span>
+            <span className="text-2xl font-bold text-gray-800">
+              {isLoading ? '...' : stats.sold}
+            </span>
           </div>
           <h3 className="text-sm font-medium text-gray-600">Sold Out</h3>
         </div>
@@ -85,7 +79,9 @@ export default function AdminDashboard() {
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
               <FaClock className="text-purple-600" size={24} />
             </div>
-            <span className="text-2xl font-bold text-gray-800">{mockStats.recentlyAdded}</span>
+            <span className="text-2xl font-bold text-gray-800">
+              {isLoading ? '...' : (stats.recent || 0)}
+            </span>
           </div>
           <h3 className="text-sm font-medium text-gray-600">Recent (7 days)</h3>
         </div>
@@ -136,30 +132,38 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {mockRecentProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                    {product.title}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {product.year}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        product.status === 'available'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-orange-100 text-orange-700'
-                      }`}
-                    >
-                      {product.status === 'available' ? 'Available' : 'Sold'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {new Date(product.createdAt).toLocaleDateString()}
+              {recentProducts.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                    No recent products
                   </td>
                 </tr>
-              ))}
+              ) : (
+                recentProducts.map((product) => (
+                  <tr key={product.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                      {product.title}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {product.year}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                          product.status === 'available'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-orange-100 text-orange-700'
+                        }`}
+                      >
+                        {product.status === 'available' ? 'Available' : 'Sold'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {new Date(product.createdAt).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

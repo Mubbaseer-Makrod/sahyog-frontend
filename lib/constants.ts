@@ -1,5 +1,5 @@
-// API Base URL - Update this when backend is ready
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+// API Base URL
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 // Local Storage Keys
 export const AUTH_TOKEN_KEY = 'sahyog_admin_token';
@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
   
   // Products (Admin)
   ADMIN_PRODUCTS: '/admin/products',
+  ADMIN_PRODUCTS_STATS: '/admin/products/stats',
   ADMIN_PRODUCT_BY_ID: (id: string) => `/admin/products/${id}`,
   ADMIN_PRODUCT_STATUS: (id: string) => `/admin/products/${id}/status`,
   
