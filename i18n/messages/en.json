@@ -1,0 +1,213 @@
+{
+  "nav": {
+    "home": "Home",
+    "catalog": "Catalog",
+    "contact": "Contact",
+    "whatsapp": "WhatsApp",
+    "contactWhatsApp": "Contact on WhatsApp"
+  },
+  "hero": {
+    "badge": "Trusted by 1000+ Farmers",
+    "titlePrefix": "Quality Tractors for",
+    "titleHighlight": "Modern Farming",
+    "subtitle": "Empowering farmers with reliable machinery and exceptional service. Find the perfect tractor for your agricultural needs.",
+    "ctaBrowse": "Browse Tractors",
+    "ctaContact": "Contact Us",
+    "stats": {
+      "sold": "Tractors Sold",
+      "happy": "Happy Farmers",
+      "brands": "Brands"
+    }
+  },
+  "section": {
+    "featured": "Featured Collection"
+  },
+  "products": {
+    "title": "Available Tractors",
+    "subtitle": "Browse our premium collection of tractors from top brands. Tap on any tractor to enquire instantly via WhatsApp.",
+    "loading": "Loading tractors...",
+    "emptyTitle": "No tractors available at the moment.",
+    "emptySubtitle": "Please check back later.",
+    "errorTitle": "Error loading products",
+    "showing": "Showing {start}-{end} of {total} tractors"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page}"
+  },
+  "footer": {
+    "description": "Your trusted partner for quality tractors and farm equipment. Empowering farmers with reliable machinery since 2020.",
+    "quickLinks": "Quick Links",
+    "home": "Home",
+    "catalog": "Our Catalog",
+    "about": "About Us",
+    "services": "Services",
+    "contact": "Contact",
+    "contactUs": "Contact Us",
+    "getInTouch": "Get in Touch",
+    "whatsappCta": "Have questions? Chat with us directly on WhatsApp for instant support!",
+    "whatsappButton": "Chat on WhatsApp",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "lightbox": {
+    "close": "Close lightbox",
+    "previous": "Previous image",
+    "next": "Next image",
+    "goTo": "Go to image {index}",
+    "swipe": "Swipe to navigate"
+  },
+  "admin": {
+    "panel": "Admin Panel",
+    "language": "Language",
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "logout": "Logout",
+    "loading": "Loading...",
+    "secureAccess": "Secure Admin Access",
+    "secureLogin": "Secure Login",
+    "sessionProtected": "Your session is protected with industry-standard encryption",
+    "login": {
+      "title": "Welcome Back! 👋",
+      "subtitle": "Enter your credentials to access the admin panel",
+      "email": "Email Address",
+      "password": "Password",
+      "emailPlaceholder": "Enter your email",
+      "passwordPlaceholder": "Enter your password",
+      "signingIn": "Signing In...",
+      "signIn": "Sign In to Dashboard",
+      "errorFields": "Please fill in all fields",
+      "errorInvalid": "Invalid credentials. Please try again."
+    },
+    "dashboardPage": {
+      "welcome": "Welcome back! Here's what's happening with your inventory.",
+      "total": "Total Products",
+      "available": "Available",
+      "soldOut": "Sold Out",
+      "recent": "Recent (7 days)",
+      "quickActions": "Quick Actions",
+      "addNew": "Add New Product",
+      "viewAll": "View All Products",
+      "recentProducts": "Recent Products",
+      "table": {
+        "product": "Product",
+        "year": "Year",
+        "status": "Status",
+        "dateAdded": "Date Added",
+        "empty": "No recent products",
+        "available": "Available",
+        "sold": "Sold"
+      }
+    },
+    "productsPage": {
+      "title": "Products",
+      "subtitle": "Manage your product inventory",
+      "search": "Search products...",
+      "filters": {
+        "all": "All",
+        "available": "Available",
+        "sold": "Sold"
+      },
+      "table": {
+        "product": "Product",
+        "year": "Year",
+        "status": "Status",
+        "created": "Created",
+        "images": "Images",
+        "actions": "Actions",
+        "loading": "Loading products...",
+        "emptyFiltered": "No products found matching your filters.",
+        "empty": "No products yet. Create your first product!",
+        "available": "Available",
+        "sold": "Sold",
+        "edit": "Edit",
+        "toggle": "Toggle Status",
+        "delete": "Delete",
+        "imageSingle": "image",
+        "imagePlural": "images"
+      },
+      "toast": {
+        "status": "Product marked as {status}",
+        "toggleFail": "Failed to toggle status",
+        "deleted": "Product deleted successfully",
+        "deleteFail": "Failed to delete product"
+      },
+      "deleteModal": {
+        "title": "Delete product?",
+        "description": "Are you sure you want to delete this product? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Yes, delete",
+        "deleting": "Deleting..."
+      },
+      "showing": "Showing {start}-{end} of {total} products"
+    },
+    "form": {
+      "addTitle": "Add New Product",
+      "editTitle": "Edit Product",
+      "addSubtitle": "Fill in the details to create a new product listing",
+      "editSubtitle": "Update product details",
+      "info": "Product Information",
+      "images": "Product Images",
+      "upload": "Upload Images",
+      "uploadHint": "Click to upload images",
+      "uploadTypes": "PNG, JPG, JPEG up to 10MB each (auto-compressed)",
+      "uploadNote": "You can select multiple images at once. Works on all devices (computer, Android, iOS).",
+      "noImages": "No images added yet",
+      "title": "Title",
+      "titlePlaceholder": "e.g., Mahindra 575 DI",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe the product features and condition...",
+      "year": "Year",
+      "price": "Price (Optional)",
+      "pricePlaceholder": "Leave empty to hide price",
+      "status": "Status",
+      "available": "Available",
+      "sold": "Sold",
+      "create": "Create Product",
+      "createSuccess": "Product created successfully!",
+      "creating": "Creating...",
+      "update": "Update Product",
+      "updateSuccess": "Product updated successfully!",
+      "updating": "Updating...",
+      "cancel": "Cancel"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "titleLength": "Title must be between 3 and 200 characters",
+      "descRequired": "Description is required",
+      "descLength": "Description must be between 10 and 2000 characters",
+      "yearRequired": "Year is required",
+      "yearRange": "Year must be between 1950 and next year",
+      "pricePositive": "Price must be a positive number",
+      "imageRequired": "Please add at least one image",
+      "imageMax": "Maximum {max} images allowed",
+      "validationError": "Validation error"
+    },
+    "upload": {
+      "maxImages": "You can only upload up to {max} images",
+      "remaining": "Only {count} image(s) will be added (max {max})",
+      "notImage": "{name} is not an image file",
+      "invalidFile": "Invalid File",
+      "tooLarge": "{name} exceeds {max}MB and was skipped",
+      "fileTooLarge": "File too large",
+      "uploaded": "{count} image(s) uploaded successfully",
+      "compressInfo": "Large images will be compressed automatically during upload"
+    },
+    "errors": {
+      "imageTooLarge": "Image too large",
+      "unauthorized": "Unauthorized",
+      "sessionExpired": "Session expired. Please login again.",
+      "tooMany": "Too many requests",
+      "tryAgain": "Please wait a moment and try again.",
+      "serverError": "Server error",
+      "somethingWrong": "Something went wrong. Please try again.",
+      "requestFailed": "Request failed",
+      "createFail": "Failed to create product",
+      "updateFail": "Failed to update product",
+      "productNotFound": "Product not found",
+      "loadFail": "Failed to load product"
+    }
+  }
+}

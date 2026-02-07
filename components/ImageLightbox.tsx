@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useI18n } from "@/contexts/I18nContext";
 
 type ImageLightboxProps = {
   images: string[];
@@ -19,6 +20,7 @@ export default function ImageLightbox({
   onClose,
   title,
 }: ImageLightboxProps) {
+  const { t } = useI18n();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -100,7 +102,7 @@ export default function ImageLightbox({
       <button
         onClick={onClose}
         className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-all duration-200 z-50 backdrop-blur-md"
-        aria-label="Close lightbox"
+        aria-label={t('lightbox.close')}
       >
         <FaTimes size={24} />
       </button>
@@ -121,7 +123,7 @@ export default function ImageLightbox({
         <div className="relative w-full h-full max-w-6xl max-h-[90vh] flex items-center justify-center">
           <Image
             src={images[currentIndex]}
-            alt={`${title} - Image ${currentIndex + 1}`}
+            alt={`${title} - ${t('lightbox.goTo', { index: currentIndex + 1 })}`}
             fill
             className="object-contain"
             priority
@@ -138,7 +140,7 @@ export default function ImageLightbox({
               prevImage();
             }}
             className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-4 rounded-full transition-all duration-200 backdrop-blur-md z-50"
-            aria-label="Previous image"
+            aria-label={t('lightbox.previous')}
           >
             <FaChevronLeft size={24} />
           </button>
@@ -148,7 +150,7 @@ export default function ImageLightbox({
               nextImage();
             }}
             className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-4 rounded-full transition-all duration-200 backdrop-blur-md z-50"
-            aria-label="Next image"
+            aria-label={t('lightbox.next')}
           >
             <FaChevronRight size={24} />
           </button>
@@ -172,7 +174,7 @@ export default function ImageLightbox({
                     ? 'bg-white w-10 shadow-lg' 
                     : 'bg-white/50 hover:bg-white/80 w-2.5'
                 }`}
-                aria-label={`Go to image ${index + 1}`}
+                aria-label={t('lightbox.goTo', { index: index + 1 })}
               />
             ))}
           </div>
@@ -191,7 +193,7 @@ export default function ImageLightbox({
       {/* Swipe Hint for Mobile */}
       {images.length > 1 && (
         <div className="absolute bottom-32 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full sm:hidden animate-pulse">
-          <span className="text-white/80 text-xs">Swipe to navigate</span>
+          <span className="text-white/80 text-xs">{t('lightbox.swipe')}</span>
         </div>
       )}
     </div>

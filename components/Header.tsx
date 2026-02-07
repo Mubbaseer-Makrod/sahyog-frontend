@@ -1,14 +1,31 @@
 "use client";
 
-import React, { useState } from "react";
-import { FaWhatsapp, FaBars, FaTimes } from "react-icons/fa";
-import { getWhatsAppLink, contactConfig } from "@/config/contact";
+import React, { useEffect, useRef, useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useI18n } from "@/contexts/I18nContext";
+
+type SectionId = 'top' | 'products' | 'contact';
+const NAV_SECTIONS: SectionId[] = ['top', 'products', 'contact'];
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<SectionId>('top');
+  const manualActiveRef = useRef<SectionId | null>(null);
+  const manualTimeoutRef = useRef<number | null>(null);
+  const { t } = useI18n();
 
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = (sectionId: SectionId) => {
     setIsMenuOpen(false);
+    setActiveSection(sectionId);
+    manualActiveRef.current = sectionId;
+    if (manualTimeoutRef.current) {
+      window.clearTimeout(manualTimeoutRef.current);
+    }
+    manualTimeoutRef.current = window.setTimeout(() => {
+      manualActiveRef.current = null;
+      manualTimeoutRef.current = null;
+    }, 900);
     
     if (sectionId === 'top') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -28,6 +45,73 @@ export default function Header() {
     }
   };
 
+  useEffect(() => {
+    const headerOffset = 96;
+    let ticking = false;
+
+    const updateActiveSection = () => {
+      if (manualActiveRef.current) {
+        return;
+      }
+
+      const scrollPosition = window.scrollY + headerOffset;
+      let current: SectionId = 'top';
+
+      NAV_SECTIONS.forEach((sectionId) => {
+        if (sectionId === 'top') {
+          return;
+        }
+
+        const element = document.getElementById(sectionId);
+        if (!element) {
+          return;
+        }
+
+        const elementTop = element.offsetTop - headerOffset;
+        if (scrollPosition >= elementTop) {
+          current = sectionId;
+        }
+      });
+
+      setActiveSection((prev) => (prev === current ? prev : current));
+    };
+
+    const handleScroll = () => {
+      if (ticking) {
+        return;
+      }
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        updateActiveSection();
+        ticking = false;
+      });
+    };
+
+    updateActiveSection();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      if (manualTimeoutRef.current) {
+        window.clearTimeout(manualTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const navLabels: Record<SectionId, string> = {
+    top: t('nav.home'),
+    products: t('nav.catalog'),
+    contact: t('nav.contact'),
+  };
+
+  const navItems: Array<{ id: SectionId; label: string; target: SectionId }> = NAV_SECTIONS.map((sectionId) => ({
+    id: sectionId,
+    label: navLabels[sectionId],
+    target: sectionId,
+  }));
+
   return (
     <header className="bg-white border-b-2 border-gray-100 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
@@ -43,37 +127,29 @@ export default function Header() {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          <button 
-            onClick={() => scrollToSection('top')} 
-            className="text-gray-700 hover:text-green-600 transition font-medium"
-          >
-            Home
-          </button>
-          <button 
-            onClick={() => scrollToSection('products')} 
-            className="text-gray-700 hover:text-green-600 transition font-medium"
-          >
-            Catalog
-          </button>
-          <button 
-            onClick={() => scrollToSection('contact')} 
-            className="text-gray-700 hover:text-green-600 transition font-medium"
-          >
-            Contact
-          </button>
+        <nav className="hidden md:flex items-center gap-12">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => scrollToSection(item.target)}
+              className={`relative px-4 py-2 font-semibold transition-colors text-base tracking-wide ${
+                activeSection === item.id ? 'text-emerald-600' : 'text-gray-700'
+              }`}
+            >
+              {item.label}
+              <span
+                className={`absolute -bottom-1 left-1/2 -translate-x-1/2 h-0.5 rounded-full bg-emerald-500 transition-all duration-300 ${
+                  activeSection === item.id ? 'w-6 opacity-100' : 'w-0 opacity-0'
+                }`}
+              />
+            </button>
+          ))}
         </nav>
 
-        {/* Desktop WhatsApp Button */}
-        <a
-          href={getWhatsAppLink(contactConfig.whatsappMessages.general)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden md:flex bg-green-600 text-white px-5 py-2.5 rounded-lg items-center gap-2 hover:bg-green-700 transition font-semibold shadow-sm hover:shadow-md"
-        >
-          <FaWhatsapp size={20} />
-          <span>WhatsApp</span>
-        </a>
+        {/* Language Switcher */}
+        <div className="hidden md:block">
+          <LanguageSwitcher />
+        </div>
 
         {/* Mobile Menu Button */}
         <button
@@ -88,33 +164,18 @@ export default function Header() {
       {/* Mobile Menu */}
       {isMenuOpen && (
         <nav className="md:hidden bg-gray-50 border-t border-gray-200 px-4 py-4 space-y-3 shadow-lg">
-          <button
-            onClick={() => scrollToSection('top')}
-            className="block w-full text-left py-3 px-4 text-gray-700 hover:bg-green-50 hover:text-green-600 rounded-lg transition font-medium"
-          >
-            Home
-          </button>
-          <button
-            onClick={() => scrollToSection('products')}
-            className="block w-full text-left py-3 px-4 text-gray-700 hover:bg-green-50 hover:text-green-600 rounded-lg transition font-medium"
-          >
-            Catalog
-          </button>
-          <button
-            onClick={() => scrollToSection('contact')}
-            className="block w-full text-left py-3 px-4 text-gray-700 hover:bg-green-50 hover:text-green-600 rounded-lg transition font-medium"
-          >
-            Contact
-          </button>
-          <a
-            href={getWhatsAppLink(contactConfig.whatsappMessages.general)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition font-semibold mt-2"
-          >
-            <FaWhatsapp size={20} />
-            <span>Contact on WhatsApp</span>
-          </a>
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => scrollToSection(item.target)}
+              className="block w-full text-left py-3 px-4 rounded-lg font-medium text-gray-700 hover:bg-green-50 hover:text-green-600"
+            >
+              {item.label}
+            </button>
+          ))}
+          <div className="pt-2">
+            <LanguageSwitcher className="w-full" />
+          </div>
         </nav>
       )}
     </header>

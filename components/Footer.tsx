@@ -1,18 +1,22 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
-import { 
-  FaWhatsapp, 
-  FaPhone, 
-  FaEnvelope, 
-  FaMapMarkerAlt, 
-  FaFacebook, 
-  FaInstagram, 
-  FaTwitter 
+import {
+  FaWhatsapp,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaFacebook,
+  FaInstagram,
+  FaTwitter
 } from "react-icons/fa";
+import { contactConfig, getWhatsAppLink } from "@/config/contact";
+import { useI18n } from "@/contexts/I18nContext";
 
 export default function Footer() {
+  const { t } = useI18n();
+  const fullAddress = `${contactConfig.address.street}, ${contactConfig.address.city}, ${contactConfig.address.state} ${contactConfig.address.pincode}`;
+  const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
+
   return (
     <footer id="contact" className="bg-gradient-to-br from-gray-50 via-green-50 to-gray-50 text-gray-800 mt-20 relative z-10">
       {/* Decorative top border */}
@@ -29,8 +33,7 @@ export default function Footer() {
               <span className="text-gray-800">Farm</span>
             </h3>
             <p className="text-gray-600 text-sm leading-relaxed">
-              Your trusted partner for quality tractors and farm equipment. 
-              Empowering farmers with reliable machinery since 2020.
+              {t('footer.description')}
             </p>
             <div className="flex gap-4 mt-6">
               <span className="bg-white border-2 border-gray-200 p-3 rounded-full text-gray-400 shadow-sm cursor-default">
@@ -48,28 +51,28 @@ export default function Footer() {
           {/* Quick Links */}
           <div className="space-y-5">
             <h4 className="text-lg font-bold text-green-600 mb-4 pb-3 border-b-2 border-gray-200">
-              Quick Links
+              {t('footer.quickLinks')}
             </h4>
             <ul className="space-y-3">
               <li className="text-gray-500 text-sm flex items-center gap-2 cursor-default">
                 <span className="text-gray-400">›</span> 
-                <span>Home</span>
+                <span>{t('footer.home')}</span>
               </li>
               <li className="text-gray-500 text-sm flex items-center gap-2 cursor-default">
                 <span className="text-gray-400">›</span> 
-                <span>Our Catalog</span>
+                <span>{t('footer.catalog')}</span>
               </li>
               <li className="text-gray-500 text-sm flex items-center gap-2 cursor-default">
                 <span className="text-gray-400">›</span> 
-                <span>About Us</span>
+                <span>{t('footer.about')}</span>
               </li>
               <li className="text-gray-500 text-sm flex items-center gap-2 cursor-default">
                 <span className="text-gray-400">›</span> 
-                <span>Services</span>
+                <span>{t('footer.services')}</span>
               </li>
               <li className="text-gray-500 text-sm flex items-center gap-2 cursor-default">
                 <span className="text-gray-400">›</span> 
-                <span>Contact</span>
+                <span>{t('footer.contact')}</span>
               </li>
             </ul>
           </div>
@@ -77,36 +80,37 @@ export default function Footer() {
           {/* Contact Info */}
           <div className="space-y-5">
             <h4 className="text-lg font-bold text-green-600 mb-4 pb-3 border-b-2 border-gray-200">
-              Contact Us
+              {t('footer.contactUs')}
             </h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-sm">
                 <FaMapMarkerAlt className="text-green-600 mt-1 flex-shrink-0" size={18} />
                 <a 
-                  href="https://www.google.com/maps/search/?api=1&query=123+Farm+Road+Agriculture+District+Your+City+State+123456"
+                  href={mapLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-600 hover:text-green-600 transition-colors hover:underline leading-relaxed cursor-pointer"
                 >
-                  123 Farm Road, Agriculture District,<br />Your City, State 123456
+                  {contactConfig.address.street}, {contactConfig.address.city},<br />
+                  {contactConfig.address.state} {contactConfig.address.pincode}
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm">
                 <FaPhone className="text-green-600 flex-shrink-0" size={18} />
                 <a 
-                  href="tel:+91XXXXXXXXXX" 
+                  href={`tel:${contactConfig.phone.replace(/\s+/g, '')}`}
                   className="text-gray-600 hover:text-green-600 transition-colors hover:underline"
                 >
-                  +91 XXXX-XXX-XXX
+                  {contactConfig.phone}
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm">
                 <FaEnvelope className="text-green-600 flex-shrink-0" size={18} />
                 <a 
-                  href="mailto:info@sahyogfarm.com" 
+                  href={`mailto:${contactConfig.email}`}
                   className="text-gray-600 hover:text-green-600 transition-colors hover:underline"
                 >
-                  info@sahyogfarm.com
+                  {contactConfig.email}
                 </a>
               </li>
             </ul>
@@ -115,19 +119,19 @@ export default function Footer() {
           {/* WhatsApp CTA */}
           <div className="space-y-5">
             <h4 className="text-lg font-bold text-green-600 mb-4 pb-3 border-b-2 border-gray-200">
-              Get in Touch
+              {t('footer.getInTouch')}
             </h4>
             <p className="text-gray-600 text-sm leading-relaxed">
-              Have questions? Chat with us directly on WhatsApp for instant support!
+              {t('footer.whatsappCta')}
             </p>
             <a
-              href="https://wa.me/91XXXXXXXXXX?text=Hello%20I%20need%20assistance"
+              href={getWhatsAppLink(contactConfig.whatsappMessages.contactRequest)}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 bg-green-600 text-white py-3 px-6 rounded-xl font-bold hover:bg-green-700 active:scale-95 transition-all shadow-lg hover:shadow-xl"
+              className="inline-flex items-center gap-3 bg-emerald-600 text-white py-3 px-6 rounded-xl font-bold hover:bg-emerald-700 active:scale-95 transition-all shadow-lg hover:shadow-xl"
             >
               <FaWhatsapp size={24} />
-              <span>Chat on WhatsApp</span>
+              <span>{t('footer.whatsappButton')}</span>
             </a>
           </div>
         </div>
@@ -138,14 +142,14 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
             <p className="text-gray-600">
-              &copy; {new Date().getFullYear()} SahyogFarm. All rights reserved.
+              &copy; {new Date().getFullYear()} SahyogFarm. {t('footer.rights')}
             </p>
             <div className="flex gap-6">
               <span className="text-gray-500 cursor-default">
-                Privacy Policy
+                {t('footer.privacy')}
               </span>
               <span className="text-gray-500 cursor-default">
-                Terms of Service
+                {t('footer.terms')}
               </span>
             </div>
           </div>

@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useI18n } from "@/contexts/I18nContext";
 
 type SectionHeaderProps = {
   title: string;
@@ -11,6 +14,7 @@ export default function SectionHeader({
   subtitle, 
   alignment = "left" 
 }: SectionHeaderProps) {
+  const { t } = useI18n();
   const centerClass = alignment === "center" ? "mx-auto text-center" : "";
   
   return (
@@ -21,7 +25,7 @@ export default function SectionHeader({
         <div className="relative flex-shrink-0">
           <div className="absolute inset-0 bg-green-100 blur-sm rounded-full"></div>
           <span className="relative px-3 sm:px-4 py-1.5 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-full text-green-700 font-bold text-xs uppercase tracking-wider sm:tracking-widest shadow-sm whitespace-nowrap">
-            Featured Collection
+            {t('section.featured')}
           </span>
         </div>
         <div className="hidden sm:block h-[2px] w-8 sm:w-16 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full"></div>

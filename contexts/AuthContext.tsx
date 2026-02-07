@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       router.push('/admin/dashboard');
     } catch (error: any) {
       console.error('Login error:', error);
-      throw new Error(error.message || 'Login failed. Please check your credentials.');
+      throw error;
     } finally {
       setIsLoading(false);
     }

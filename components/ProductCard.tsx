@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FaWhatsapp, FaCalendarAlt, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { getWhatsAppLink, contactConfig } from "@/config/contact";
 import ImageLightbox from "./ImageLightbox";
+import { useI18n } from "@/contexts/I18nContext";
 
 type ProductCardProps = {
   title: string;
@@ -19,6 +20,7 @@ export function ProductCard({
   images,
   year,
 }: ProductCardProps) {
+  const { t } = useI18n();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
@@ -82,7 +84,7 @@ export function ProductCard({
         >
           <Image
             src={images[currentImageIndex]}
-            alt={`${title} - Image ${currentImageIndex + 1}`}
+            alt={`${title} - ${t('lightbox.goTo', { index: currentImageIndex + 1 })}`}
             fill
             className="object-cover transition-all duration-500"
           />
@@ -94,14 +96,14 @@ export function ProductCard({
               <button
                 onClick={(e) => prevImage(e)}
                 className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
-                aria-label="Previous image"
+                aria-label={t('lightbox.previous')}
               >
                 <FaChevronLeft size={16} />
               </button>
               <button
                 onClick={(e) => nextImage(e)}
                 className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
-                aria-label="Next image"
+                aria-label={t('lightbox.next')}
               >
                 <FaChevronRight size={16} />
               </button>
@@ -120,7 +122,7 @@ export function ProductCard({
                       ? 'bg-white w-8 shadow-md' 
                       : 'bg-white/60 hover:bg-white/90 w-2'
                   }`}
-                  aria-label={`Go to image ${index + 1}`}
+                  aria-label={t('lightbox.goTo', { index: index + 1 })}
                 />
               ))}
             </div>
@@ -140,8 +142,8 @@ export function ProductCard({
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="absolute bottom-3 right-3 bg-green-600 text-white p-2.5 rounded-full hover:bg-green-700 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl z-20 cursor-pointer"
-            aria-label="Enquire on WhatsApp"
+            className="absolute bottom-3 right-3 bg-emerald-600 text-white p-2.5 rounded-full hover:bg-emerald-700 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl z-20 cursor-pointer"
+            aria-label={t('hero.ctaContact')}
           >
             <FaWhatsapp size={20} />
           </a>

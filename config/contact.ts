@@ -14,13 +14,13 @@ export const contactConfig = {
   },
   
   // Contact Details
-  phone: "+91 XXXX-XXX-XXX", // Replace with your formatted number
+  phone: "+91 8780-573-189", // Replace with your formatted number
   email: "info@sahyogfarm.com",
   address: {
-    street: "123 Farm Road, Agriculture District",
-    city: "Your City",
-    state: "State",
-    pincode: "123456",
+    street: "National Plaza, piraman road",
+    city: "Ankleshwar",
+    state: "Gujarat",
+    pincode: "393001",
   },
   
   // Social Media (optional)

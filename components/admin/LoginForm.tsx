@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
+import { useI18n } from "@/contexts/I18nContext";
 
 export default function LoginForm() {
   const { login, isLoading } = useAuth();
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -16,14 +18,14 @@ export default function LoginForm() {
     setError("");
 
     if (!email || !password) {
-      setError("Please fill in all fields");
+      setError(t('admin.login.errorFields'));
       return;
     }
 
     try {
       await login(email, password);
     } catch (err: any) {
-      setError(err.message || "Invalid credentials. Please try again.");
+      setError(err.message || t('admin.login.errorInvalid'));
     }
   };
 
@@ -53,7 +55,7 @@ export default function LoginForm() {
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
             <span className="text-sm font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
-              Admin Dashboard
+              {t('admin.dashboard')}
             </span>
           </div>
         </div>
@@ -61,8 +63,8 @@ export default function LoginForm() {
         {/* Login Card */}
         <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/50 animate-slide-up">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">Welcome Back! 👋</h2>
-            <p className="text-gray-500 text-sm">Enter your credentials to access the admin panel</p>
+            <h2 className="text-2xl font-bold text-gray-800 mb-1">{t('admin.login.title')}</h2>
+            <p className="text-gray-500 text-sm">{t('admin.login.subtitle')}</p>
           </div>
 
           {error && (
@@ -78,7 +80,7 @@ export default function LoginForm() {
             {/* Email Field */}
             <div className="group">
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                Email Address
+                {t('admin.login.email')}
               </label>
               <div className="relative">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-green-600 transition-colors">
@@ -90,7 +92,7 @@ export default function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                  placeholder="Enter your email"
+                  placeholder={t('admin.login.emailPlaceholder')}
                   autoComplete="email"
                   disabled={isLoading}
                 />
@@ -100,7 +102,7 @@ export default function LoginForm() {
             {/* Password Field */}
             <div className="group">
               <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
-                Password
+                {t('admin.login.password')}
               </label>
               <div className="relative">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-green-600 transition-colors">
@@ -112,7 +114,7 @@ export default function LoginForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-12 pr-14 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                  placeholder="Enter your password"
+                  placeholder={t('admin.login.passwordPlaceholder')}
                   disabled={isLoading}
                 />
                 <button
@@ -135,11 +137,11 @@ export default function LoginForm() {
               {isLoading ? (
                 <>
                   <FaSpinner className="animate-spin" size={18} />
-                  <span>Signing In...</span>
+                  <span>{t('admin.login.signingIn')}</span>
                 </>
               ) : (
                 <>
-                  <span>Sign In to Dashboard</span>
+                  <span>{t('admin.login.signIn')}</span>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
@@ -154,10 +156,10 @@ export default function LoginForm() {
               <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
-              <span className="text-sm font-medium">Secure Admin Access</span>
+              <span className="text-sm font-medium">{t('admin.secureAccess')}</span>
             </div>
             <p className="text-xs text-gray-500 text-center mt-2">
-              Your session is protected with industry-standard encryption
+              {t('admin.sessionProtected')}
             </p>
           </div>
         </div>
@@ -168,7 +170,7 @@ export default function LoginForm() {
             <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <span>Secure Login</span>
+            <span>{t('admin.secureLogin')}</span>
           </div>
           <span>•</span>
           <span>&copy; {new Date().getFullYear()} SahyogFarm</span>

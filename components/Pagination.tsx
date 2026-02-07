@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useI18n } from "@/contexts/I18nContext";
 
 type PaginationProps = {
   currentPage: number;
@@ -9,6 +10,7 @@ type PaginationProps = {
 };
 
 export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+  const { t } = useI18n();
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
   
   // Show max 5 page numbers
@@ -35,12 +37,12 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
         className="flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-gray-200 bg-white text-gray-700 font-semibold hover:border-green-500 hover:text-green-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:text-gray-700 transition-all"
-        aria-label="Previous page"
+        aria-label={t('pagination.previous')}
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        <span className="hidden sm:inline">Previous</span>
+        <span className="hidden sm:inline">{t('pagination.previous')}</span>
       </button>
 
       {/* Page Numbers */}
@@ -66,7 +68,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
                   ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg scale-110'
                   : 'bg-white border-2 border-gray-200 text-gray-700 hover:border-green-500 hover:text-green-600'
               }`}
-              aria-label={`Page ${pageNum}`}
+              aria-label={t('pagination.page', { page: pageNum })}
               aria-current={isActive ? 'page' : undefined}
             >
               {pageNum}
@@ -80,9 +82,9 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
         className="flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-gray-200 bg-white text-gray-700 font-semibold hover:border-green-500 hover:text-green-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:text-gray-700 transition-all"
-        aria-label="Next page"
+        aria-label={t('pagination.next')}
       >
-        <span className="hidden sm:inline">Next</span>
+        <span className="hidden sm:inline">{t('pagination.next')}</span>
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>

@@ -11,20 +11,23 @@ import {
   FaTimes 
 } from 'react-icons/fa';
 import { useState } from 'react';
+import { useI18n } from '@/contexts/I18nContext';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function AdminSidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useI18n();
 
   const menuItems = [
     {
-      name: 'Dashboard',
+      name: t('admin.dashboard'),
       icon: FaTachometerAlt,
       path: '/admin/dashboard',
     },
     {
-      name: 'Products',
+      name: t('admin.products'),
       icon: FaBox,
       path: '/admin/products',
     },
@@ -47,7 +50,7 @@ export default function AdminSidebar() {
             <span className="text-green-600">Sahyog</span>
             <span className="text-gray-800">Farm</span>
           </h1>
-          <div className="w-10" /> {/* Spacer for centering */}
+          <div className="w-10" />
         </div>
       </div>
 
@@ -67,11 +70,13 @@ export default function AdminSidebar() {
       >
         {/* Logo */}
         <div className="p-6 border-b border-gray-200">
-          <h1 className="text-2xl font-bold">
-            <span className="text-green-600">Sahyog</span>
-            <span className="text-gray-800">Farm</span>
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">Admin Panel</p>
+          <div>
+            <h1 className="text-2xl font-bold">
+              <span className="text-green-600">Sahyog</span>
+              <span className="text-gray-800">Farm</span>
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">{t('admin.panel')}</p>
+          </div>
         </div>
 
         {/* User Info */}
@@ -86,6 +91,15 @@ export default function AdminSidebar() {
               <p className="text-sm font-semibold text-gray-800 truncate">{user?.name}</p>
               <p className="text-xs text-gray-500 truncate">{user?.email}</p>
             </div>
+          </div>
+          <div className="mt-4 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                {t('admin.language')}
+              </span>
+              <div className="h-1 w-10 bg-green-500 rounded-full" />
+            </div>
+            <LanguageSwitcher className="w-full" />
           </div>
         </div>
 
@@ -115,7 +129,7 @@ export default function AdminSidebar() {
             className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-all w-full"
           >
             <FaSignOutAlt size={18} />
-            <span className="font-medium">Logout</span>
+            <span className="font-medium">{t('admin.logout')}</span>
           </button>
         </div>
       </aside>

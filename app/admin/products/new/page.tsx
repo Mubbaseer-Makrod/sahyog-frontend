@@ -7,6 +7,7 @@ import { ProductFormData } from '@/types';
 import { useProducts } from '@/contexts/ProductsContext';
 import { useToast } from '@/contexts/ToastContext';
 import { ApiError } from '@/lib/api';
+import { useI18n } from '@/contexts/I18nContext';
 
 const MAX_IMAGES = 10;
 const MAX_FILE_SIZE_MB = 10;
@@ -16,6 +17,7 @@ export default function NewProductPage() {
   const router = useRouter();
   const { createProduct } = useProducts();
   const toast = useToast();
+  const { t } = useI18n();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<ProductFormData>({
     title: '',
@@ -28,29 +30,29 @@ export default function NewProductPage() {
   const validateForm = () => {
     const errors: string[] = [];
 
-    if (!formData.title?.trim()) errors.push('Title is required');
+    if (!formData.title?.trim()) errors.push(t('admin.validation.titleRequired'));
     if (formData.title && (formData.title.length < 3 || formData.title.length > 200)) {
-      errors.push('Title must be between 3 and 200 characters');
+      errors.push(t('admin.validation.titleLength'));
     }
-    if (!formData.description?.trim()) errors.push('Description is required');
+    if (!formData.description?.trim()) errors.push(t('admin.validation.descRequired'));
     if (formData.description && (formData.description.length < 10 || formData.description.length > 2000)) {
-      errors.push('Description must be between 10 and 2000 characters');
+      errors.push(t('admin.validation.descLength'));
     }
-    if (!formData.year) errors.push('Year is required');
+    if (!formData.year) errors.push(t('admin.validation.yearRequired'));
     if (formData.year) {
       const maxYear = new Date().getFullYear() + 1;
       if (formData.year < 1950 || formData.year > maxYear) {
-        errors.push('Year must be between 1950 and next year');
+        errors.push(t('admin.validation.yearRange'));
       }
     }
     if (formData.price !== undefined && formData.price !== null && formData.price < 0) {
-      errors.push('Price must be a positive number');
+      errors.push(t('admin.validation.pricePositive'));
     }
     if (!formData.images || formData.images.length === 0) {
-      errors.push('Please add at least one image');
+      errors.push(t('admin.validation.imageRequired'));
     }
     if (formData.images && formData.images.length > MAX_IMAGES) {
-      errors.push(`Maximum ${MAX_IMAGES} images allowed`);
+      errors.push(t('admin.validation.imageMax', { max: MAX_IMAGES }));
     }
 
     return errors;
@@ -59,29 +61,29 @@ export default function NewProductPage() {
   const getErrorMessage = (error: unknown) => {
     if (error instanceof ApiError) {
       if (error.statusCode === 413 || error.code === 'IMAGE_TOO_LARGE') {
-        return { title: 'Image too large', message: error.message };
+        return { title: t('admin.errors.imageTooLarge'), message: error.message };
       }
       if (error.code === 'VALIDATION_ERROR' && error.details) {
         const detailMessages = Object.values(error.details).join(', ');
-        return { title: 'Validation error', message: detailMessages || error.message };
+        return { title: t('admin.validation.validationError'), message: detailMessages || error.message };
       }
       if (error.statusCode === 401) {
-        return { title: 'Unauthorized', message: 'Session expired. Please login again.' };
+        return { title: t('admin.errors.unauthorized'), message: t('admin.errors.sessionExpired') };
       }
       if (error.statusCode === 429) {
-        return { title: 'Too many requests', message: 'Please wait a moment and try again.' };
+        return { title: t('admin.errors.tooMany'), message: t('admin.errors.tryAgain') };
       }
       if (error.statusCode >= 500) {
-        return { title: 'Server error', message: 'Something went wrong. Please try again.' };
+        return { title: t('admin.errors.serverError'), message: t('admin.errors.somethingWrong') };
       }
-      return { title: error.code || 'Error', message: error.message || 'Request failed' };
+      return { title: error.code || t('admin.errors.requestFailed'), message: error.message || t('admin.errors.requestFailed') };
     }
 
     if (error instanceof Error) {
-      return { title: 'Error', message: error.message };
+      return { title: t('admin.errors.requestFailed'), message: error.message };
     }
 
-    return { title: 'Error', message: 'Failed to create product' };
+    return { title: t('admin.errors.requestFailed'), message: t('admin.errors.createFail') };
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,12 +92,12 @@ export default function NewProductPage() {
 
     const remainingSlots = MAX_IMAGES - formData.images.length;
     if (remainingSlots <= 0) {
-      toast.warning(`You can only upload up to ${MAX_IMAGES} images`);
+      toast.warning(t('admin.upload.maxImages', { max: MAX_IMAGES }));
       return;
     }
 
     if (files.length > remainingSlots) {
-      toast.warning(`Only ${remainingSlots} image(s) will be added (max ${MAX_IMAGES})`);
+      toast.warning(t('admin.upload.remaining', { count: remainingSlots, max: MAX_IMAGES }));
     }
 
     // Convert files to base64
@@ -105,13 +107,13 @@ export default function NewProductPage() {
       const file = files[i];
       if (newImages.length >= remainingSlots) break;
       if (!file.type.startsWith('image/')) {
-        toast.warning(`${file.name} is not an image file`, 'Invalid File');
+        toast.warning(t('admin.upload.notImage', { name: file.name }), t('admin.upload.invalidFile'));
         continue;
       }
 
       const sizeInMB = file.size / (1024 * 1024);
       if (sizeInMB > MAX_FILE_SIZE_MB) {
-        toast.warning(`${file.name} exceeds ${MAX_FILE_SIZE_MB}MB and was skipped`, 'File too large');
+        toast.warning(t('admin.upload.tooLarge', { name: file.name, max: MAX_FILE_SIZE_MB }), t('admin.upload.fileTooLarge'));
         continue;
       }
       if (sizeInMB > COMPRESS_NOTICE_MB) {
@@ -131,9 +133,9 @@ export default function NewProductPage() {
         ...formData,
         images: [...formData.images, ...newImages],
       });
-      toast.success(`${newImages.length} image(s) uploaded successfully`);
+      toast.success(t('admin.upload.uploaded', { count: newImages.length }));
       if (hasLargeImages) {
-        toast.info('Large images will be compressed automatically during upload');
+        toast.info(t('admin.upload.compressInfo'));
       }
     }
 
@@ -145,7 +147,7 @@ export default function NewProductPage() {
     
     const errors = validateForm();
     if (errors.length > 0) {
-      toast.error(errors[0], 'Validation error');
+      toast.error(errors[0], t('admin.validation.validationError'));
       return;
     }
 
@@ -163,7 +165,7 @@ export default function NewProductPage() {
       };
       
       await createProduct(cleanData);
-      toast.success('Product created successfully!');
+      toast.success(t('admin.form.createSuccess'));
       
       // Wait a moment for user to see the success message
       setTimeout(() => {
@@ -191,27 +193,27 @@ export default function NewProductPage() {
     <div className="p-6 lg:p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">Add New Product</h1>
-        <p className="text-gray-600">Fill in the details to create a new product listing</p>
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('admin.form.addTitle')}</h1>
+        <p className="text-gray-600">{t('admin.form.addSubtitle')}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="max-w-4xl">
         {/* Main Form */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-6">Product Information</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-6">{t('admin.form.info')}</h2>
 
           <div className="space-y-6">
             {/* Title */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Title <span className="text-red-500">*</span>
+                {t('admin.form.title')} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
-                placeholder="e.g., Mahindra 575 DI"
+                placeholder={t('admin.form.titlePlaceholder')}
                 required
               />
             </div>
@@ -219,14 +221,14 @@ export default function NewProductPage() {
             {/* Description */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description <span className="text-red-500">*</span>
+                {t('admin.form.description')} <span className="text-red-500">*</span>
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={4}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none resize-none"
-                placeholder="Describe the product features and condition..."
+                placeholder={t('admin.form.descriptionPlaceholder')}
                 required
               />
             </div>
@@ -234,7 +236,7 @@ export default function NewProductPage() {
             {/* Year */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Year <span className="text-red-500">*</span>
+                {t('admin.form.year')} <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -250,7 +252,7 @@ export default function NewProductPage() {
             {/* Price (Optional) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Price (Optional)
+                {t('admin.form.price')}
               </label>
               <input
                 type="number"
@@ -259,14 +261,14 @@ export default function NewProductPage() {
                 min="0"
                 step="1000"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
-                placeholder="Leave empty to hide price"
+                placeholder={t('admin.form.pricePlaceholder')}
               />
             </div>
 
             {/* Status */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Status <span className="text-red-500">*</span>
+                {t('admin.form.status')} <span className="text-red-500">*</span>
               </label>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -277,7 +279,7 @@ export default function NewProductPage() {
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as 'available' })}
                     className="w-4 h-4 text-green-600 focus:ring-green-500"
                   />
-                  <span className="text-sm text-gray-700">Available</span>
+                  <span className="text-sm text-gray-700">{t('admin.form.available')}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -287,7 +289,7 @@ export default function NewProductPage() {
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as 'sold' })}
                     className="w-4 h-4 text-green-600 focus:ring-green-500"
                   />
-                  <span className="text-sm text-gray-700">Sold</span>
+                  <span className="text-sm text-gray-700">{t('admin.form.sold')}</span>
                 </label>
               </div>
             </div>
@@ -296,19 +298,19 @@ export default function NewProductPage() {
 
         {/* Images Section */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-6">Product Images</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-6">{t('admin.form.images')}</h2>
 
           {/* Upload Images */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Upload Images
+              {t('admin.form.upload')}
             </label>
             <div className="flex items-center gap-4">
               <label className="flex-1 cursor-pointer">
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-500 transition-colors">
                   <FaImage className="mx-auto text-gray-400 text-3xl mb-2" />
-                  <p className="text-sm text-gray-600 mb-1">Click to upload images</p>
-                  <p className="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB each (auto-compressed)</p>
+                  <p className="text-sm text-gray-600 mb-1">{t('admin.form.uploadHint')}</p>
+                  <p className="text-xs text-gray-500">{t('admin.form.uploadTypes')}</p>
                   <input
                     type="file"
                     accept="image/*"
@@ -320,7 +322,7 @@ export default function NewProductPage() {
               </label>
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              You can select multiple images at once. Works on all devices (computer, Android, iOS).
+              {t('admin.form.uploadNote')}
             </p>
           </div>
 
@@ -331,7 +333,7 @@ export default function NewProductPage() {
                 <div key={index} className="relative group">
                   <img
                     src={url}
-                    alt={`Product ${index + 1}`}
+                    alt={`${t('admin.productsPage.table.product')} ${index + 1}`}
                     className="w-full h-32 object-cover rounded-lg border border-gray-200"
                   />
                   <button
@@ -352,7 +354,7 @@ export default function NewProductPage() {
           {formData.images.length === 0 && (
             <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
               <FaImage className="mx-auto text-gray-400 mb-2" size={48} />
-              <p className="text-gray-500">No images added yet</p>
+              <p className="text-gray-500">{t('admin.form.noImages')}</p>
             </div>
           )}
         </div>
@@ -362,10 +364,10 @@ export default function NewProductPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <FaSave />
-            {isSubmitting ? 'Creating...' : 'Create Product'}
+            {isSubmitting ? t('admin.form.creating') : t('admin.form.create')}
           </button>
           <button
             type="button"
@@ -373,7 +375,7 @@ export default function NewProductPage() {
             className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-all"
           >
             <FaTimes />
-            Cancel
+            {t('admin.form.cancel')}
           </button>
         </div>
       </form>
