@@ -6,6 +6,11 @@ import { FaSave, FaTimes, FaImage, FaTrash, FaSpinner } from 'react-icons/fa';
 import { ProductFormData } from '@/types';
 import { useProducts } from '@/contexts/ProductsContext';
 import { useToast } from '@/contexts/ToastContext';
+import { ApiError } from '@/lib/api';
+
+const MAX_IMAGES = 10;
+const MAX_FILE_SIZE_MB = 10;
+const COMPRESS_NOTICE_MB = 5;
 
 export default function EditProductPage() {
   const router = useRouter();
@@ -24,17 +29,97 @@ export default function EditProductPage() {
     status: 'available',
   });
 
+  const validateForm = () => {
+    const errors: string[] = [];
+
+    if (!formData.title?.trim()) errors.push('Title is required');
+    if (formData.title && (formData.title.length < 3 || formData.title.length > 200)) {
+      errors.push('Title must be between 3 and 200 characters');
+    }
+    if (!formData.description?.trim()) errors.push('Description is required');
+    if (formData.description && (formData.description.length < 10 || formData.description.length > 2000)) {
+      errors.push('Description must be between 10 and 2000 characters');
+    }
+    if (!formData.year) errors.push('Year is required');
+    if (formData.year) {
+      const maxYear = new Date().getFullYear() + 1;
+      if (formData.year < 1950 || formData.year > maxYear) {
+        errors.push('Year must be between 1950 and next year');
+      }
+    }
+    if (formData.price !== undefined && formData.price !== null && formData.price < 0) {
+      errors.push('Price must be a positive number');
+    }
+    if (!formData.images || formData.images.length === 0) {
+      errors.push('Please add at least one image');
+    }
+    if (formData.images && formData.images.length > MAX_IMAGES) {
+      errors.push(`Maximum ${MAX_IMAGES} images allowed`);
+    }
+
+    return errors;
+  };
+
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof ApiError) {
+      if (error.statusCode === 413 || error.code === 'IMAGE_TOO_LARGE') {
+        return { title: 'Image too large', message: error.message };
+      }
+      if (error.code === 'VALIDATION_ERROR' && error.details) {
+        const detailMessages = Object.values(error.details).join(', ');
+        return { title: 'Validation error', message: detailMessages || error.message };
+      }
+      if (error.statusCode === 401) {
+        return { title: 'Unauthorized', message: 'Session expired. Please login again.' };
+      }
+      if (error.statusCode === 429) {
+        return { title: 'Too many requests', message: 'Please wait a moment and try again.' };
+      }
+      if (error.statusCode >= 500) {
+        return { title: 'Server error', message: 'Something went wrong. Please try again.' };
+      }
+      return { title: error.code || 'Error', message: error.message || 'Request failed' };
+    }
+
+    if (error instanceof Error) {
+      return { title: 'Error', message: error.message };
+    }
+
+    return { title: 'Error', message: 'Failed to update product' };
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    const remainingSlots = MAX_IMAGES - formData.images.length;
+    if (remainingSlots <= 0) {
+      toast.warning(`You can only upload up to ${MAX_IMAGES} images`);
+      return;
+    }
+
+    if (files.length > remainingSlots) {
+      toast.warning(`Only ${remainingSlots} image(s) will be added (max ${MAX_IMAGES})`);
+    }
+
     // Convert files to base64
     const newImages: string[] = [];
+    let hasLargeImages = false;
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
+      if (newImages.length >= remainingSlots) break;
       if (!file.type.startsWith('image/')) {
         toast.warning(`${file.name} is not an image file`, 'Invalid File');
         continue;
+      }
+
+      const sizeInMB = file.size / (1024 * 1024);
+      if (sizeInMB > MAX_FILE_SIZE_MB) {
+        toast.warning(`${file.name} exceeds ${MAX_FILE_SIZE_MB}MB and was skipped`, 'File too large');
+        continue;
+      }
+      if (sizeInMB > COMPRESS_NOTICE_MB) {
+        hasLargeImages = true;
       }
       
       const reader = new FileReader();
@@ -51,7 +136,12 @@ export default function EditProductPage() {
         images: [...formData.images, ...newImages],
       });
       toast.success(`${newImages.length} image(s) uploaded successfully`);
+      if (hasLargeImages) {
+        toast.info('Large images will be compressed automatically during upload');
+      }
     }
+
+    e.target.value = '';
   };
 
   useEffect(() => {
@@ -87,13 +177,9 @@ export default function EditProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title || !formData.description || !formData.year) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
-
-    if (formData.images.length === 0) {
-      toast.warning('Please add at least one image');
+    const errors = validateForm();
+    if (errors.length > 0) {
+      toast.error(errors[0], 'Validation error');
       return;
     }
 
@@ -120,16 +206,8 @@ export default function EditProductPage() {
       }, 1000);
     } catch (error: any) {
       console.error('Error updating product:', error);
-      if (error instanceof Error) {
-        console.error('Error details:', {
-          name: error.name,
-          message: error.message,
-          statusCode: (error as any).statusCode,
-          code: (error as any).code,
-          details: (error as any).details,
-        });
-      }
-      toast.error(error.message || 'Failed to update product');
+      const { title, message } = getErrorMessage(error);
+      toast.error(message, title);
     } finally {
       setIsSubmitting(false);
     }
@@ -268,7 +346,7 @@ export default function EditProductPage() {
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-500 transition-colors">
                   <FaImage className="mx-auto text-gray-400 text-3xl mb-2" />
                   <p className="text-sm text-gray-600 mb-1">Click to upload images</p>
-                  <p className="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB each</p>
+                  <p className="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB each (auto-compressed)</p>
                   <input
                     type="file"
                     accept="image/*"

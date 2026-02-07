@@ -90,7 +90,8 @@ export default function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                  placeholder="admin@sahyogfarm.com"
+                  placeholder="Enter your email"
+                  autoComplete="email"
                   disabled={isLoading}
                 />
               </div>
